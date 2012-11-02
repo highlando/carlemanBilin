@@ -1,7 +1,7 @@
 import numpy as np
 import sympy as sp
 
-def taylorCoeffs(f,varis,order=None,point=None):
+def taylorcoeffs(f,varis,order=None,point=None):
 	"""Computes the Taylor coefficients of f
 
 	f=f(varis) up to order about the point, s.th.
@@ -46,7 +46,7 @@ def taylorCoeffs(f,varis,order=None,point=None):
 
 	return ft
 
-def taylorCoeffs2Matrix(taylC,order=None,parsVals=None):
+def taylorcoeffs2matrix(taylC,order=None,parVals=None):
 	"""list of taylC is evaluated to np.matrix
 
 	1st list dim = state dim. 
@@ -60,9 +60,71 @@ def taylorCoeffs2Matrix(taylC,order=None,parsVals=None):
 		for tidim in taylC:
 			swpl.append(tidim[o])
 		A = sp.Matrix(swpl);
-		if parsVals is not None:
-			A = A.subs(parsVals)
+		if parVals is not None:
+			A = A.subs(parVals)
 		matT.append(np.array(np.array(A), np.float))
 
 	return matT 
 
+def fgcomponentij(Fj,i):
+	"""compute components of the bilinearized sys matrix
+
+	both for F and G 
+	"""
+	if i is 1:
+		return Fj
+
+	EyeM = np.eye(Fj.shape[0])
+	SumFj = np.zeros([Fj.shape[0]**i,Fj.shape[1]*Fj.shape[0]**(i-1)])
+	print([SumFj.shape])
+	for summand in range(i):
+		SFj = Fj
+		for rFac in range(0,summand):
+			SFj = np.kron(EyeM,SFj)
+		for lFac in range(summand+1,i):
+			SFj = np.kron(SFj,EyeM)
+
+		SumFj = SumFj + SFj
+
+	return SumFj
+
+def setupbilinsystem(FJ,GKJ):
+	"""setup the coefficients A,N,B from the taylor coeffs
+
+	"""
+	Order = len(FJ)
+	sDim = FJ[0].shape[0]
+
+#setup of the A matrix 	
+	A = np.zeros((sDim,0))
+	Az = np.zeros((sDim,0))
+	for Fj in FJ:
+		A = np.concatenate((A,Fj),axis=1)
+	sfDim = A.shape[1]
+
+	for i in range(1,Order):
+		Az = np.zeros((sDim**(i+1),Az.shape[1]+sDim**i))
+		Ak = np.copy(Az)
+		for Fj in FJ[:i]:
+
+			Ak = np.concatenate((Ak,fgcomponentij(Fj,i+1)),axis=1)
+			
+		A = np.concatenate((A,Ak),axis=0)
+
+#setup of B and the list of Nk matrices 	
+	B = np.zeros((sDim,0))
+	for GkJ in GKJ:
+		B = np.concatenate((B,GkJ[1]),axis=1)
+		NK = []
+		for Gkj in GkJ
+
+
+	B = np.concatenate((B,np.zeros(sfDim-sDim,sDim))
+
+
+
+	return A B
+
+def evarhsbilinsystem(A,NK,B,u,x):
+
+	return x

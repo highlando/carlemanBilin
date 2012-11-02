@@ -1,29 +1,37 @@
+# naming conventions 
+# i - state dimension
+# j - order of expansion
+# k - dimension of input
+# Variables containing IJK are lists over all indeces
+
 import sympy as sp
-import modelMFF as model
+#import modeltest as model
+import modelmff as model
 reload(model)
-import carlem
+import carlem as carlem
 reload(carlem)
+
 
 order = 2;
 
-tF = [] #taylor coefficients
+tfIJ = [] #taylor coefficients
 for fi in model.F:
-	tF.append(carlem.taylorCoeffs(fi,model.varis))
+	tfIJ.append(carlem.taylorcoeffs(fi,model.varis))
 
-tG = []
-for gk in model.G:
-	tGk = []
-	for gki in gk:
-		tGk.append(carlem.taylorCoeffs(gki,model.varis))
-	tG.append(tGk)
+tgKIJ = []
+for gkI in model.G:
+	tgkIJ = []
+	for gki in gkI:
+		tgkIJ.append(carlem.taylorcoeffs(gki,model.varis))
+	tgKIJ.append(tgkIJ)
 
+#compute the np matrices of the coefficients
 
+parVals = dict(zip(model.params,[1]*len(model.params)))
 
+FJ = carlem.taylorcoeffs2matrix(tfIJ,parVals=parVals)
 
-	
-
-
-
-
-
+GKJ = []
+for gk in tgKIJ:
+	GKJ.append(carlem.taylorcoeffs2matrix(gk,parVals=parVals))
 
