@@ -8,6 +8,7 @@ def dydt(x,t):
 	A = np.ones((2,2))
 
 	xdot = np.dot(A,x)#+np.dot(B,t*u)
+	xdot = xdot.flatten()
 
 	return xdot
 
@@ -18,4 +19,4 @@ B = np.ones((2,1))
 x0 = np.ones((2,1))
 u = np.ones((1,1))
 
-x = integrate.odeint(dydt, x0, t)
+x = integrate.odeint(dydt, x0.flatten(), t)

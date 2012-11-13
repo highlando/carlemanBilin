@@ -94,11 +94,9 @@ def setupbilinsystem(FJ,GKJ):
 	"""
 
 #TODO exception handling
-	if not FJ[0].shape[0] == FJ[0].shape[1]:
+	if not len(FJ) == len(GKJ[0]) - 1:
 		warnings.warn("Looks like f(0) is still in the list, I'll remove it for you",UserWarning)
 		FJ = FJ[1:]
-	if FJ[0].shape == (1,1):
-		warnings.warn("If you encounter an error in this function try removing f(0) from the list",UserWarning)
 	
 	Order = len(FJ)
 	sDim = FJ[0].shape[0]
@@ -172,22 +170,25 @@ def var0tobilinx0(Var0,Order):
 
 
 
-def evarhsbilinsystem(x,t,A,NK,B,u):
+def evarhsbilinsystem(x,t,A,NK,B,Inp):
+	""" evaluate rhs of bilin appr
 
-	Xnku = np.zeros((x.shape[0],1))
+	x,Inp must be flattened vectors """
+
+	Xnku = np.zeros((x.shape[0],1)).flatten()
 	for k, Nk in enumerate(NK):
-		Xnku = Xnku + u[k]*np.dot(Nk,x)
+		Xnku = Xnku + Inp[k]*np.dot(Nk,x)
 
-	Xdot = np.dot(A,x)+Xnku+np.dot(B,u)
+	Xdot = np.dot(A,x)+Xnku+np.dot(B,Inp)
 
-	return Xdot
+	return Xdot.flatten()
 
-def evarhsmodel(varVals,t,F,GK,parPlusVals,u,Vars):
+def evarhsmodel(varVals,t,F,GK,parPlusVals,Vars,u):
 	"""Evaluate the nonlinear xdot in the actual model
 	"""
 	varPlusVals = {}
 	for i in range(len(F)):
-		varPlusVals.update({Vars[i]:varVals[(i,0)]})
+		varPlusVals.update({Vars[i]:varVals[i]})
 
 	Xdot = np.zeros((len(F),1))
 
@@ -200,5 +201,5 @@ def evarhsmodel(varVals,t,F,GK,parPlusVals,u,Vars):
 			gkip = gki.subs(parPlusVals)
 			Xdot[i] = Xdot[i]+u[k]*sp.N(gkip.subs(varPlusVals))
 
-	return Xdot
+	return Xdot.flatten()
 
