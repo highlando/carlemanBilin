@@ -1,12 +1,13 @@
 import sympy as sp
+import numpy as np
 #the mean field flow model
 
 #definition of the variables
 a1, a2, a3 = sp.symbols('a1, a2, a3')
-varis = [a1, a2, a3]
+Vars = [a1, a2, a3]
 #definition of the parameters
 sigs, oms, bet, gam = sp.symbols('sigs, oms, bet, gam')
-params = [sigs, oms, bet, gam]
+Pars = [sigs, oms, bet, gam]
 
 #definition of the F-function components
 f1 = (sigs-bet*a3)*a1 + (oms + gam*a3)*a2
@@ -23,6 +24,7 @@ g1 = g1.subs(g1,1)
 g2 = g2.subs(g2,0)
 g3 = g3.subs(g3,0)
 
-G = [[g1, g2, g3],[g1, g2, g3]];
+#G = [[g1, g2, g3],[g1, g2, g3]];
+G = [[g1, g2, g3]];
 
-
+Var0 = np.zeros((3,1))

@@ -1,12 +1,13 @@
 import sympy as sp
+import numpy as np
 #test model x'=alph*x*x+u
 
 #definition of the variables
 a1 = sp.Symbol('a1')
-varis = [a1]
+Vars = [a1]
 #definition of the parameters
-alph = sp.Symbsol('alph')
-params = [alph]
+alph = sp.Symbol('alph')
+Pars = [alph]
 
 #definition of the F-function components
 f1 = alph*a1*a1 
@@ -21,4 +22,4 @@ g1 = g1.subs(g1,1)
 
 G = [[g1]];
 
-
+Var0 = np.zeros((1,1))
